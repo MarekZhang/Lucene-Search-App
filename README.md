@@ -10,8 +10,8 @@ Java 8
 Lucene 8.4.1
 ```
 
-### Running App
-1.Download this repo
+## Running App
+1.Download this repo</br>
 2.Run the command below
 ```shell
 cd {HOME}/Lucen-Search-App/LuceneSearch
