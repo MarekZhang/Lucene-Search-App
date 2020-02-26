@@ -29,7 +29,6 @@ import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.similarities.BM25Similarity;
 import org.apache.lucene.search.similarities.ClassicSimilarity;
-import org.apache.lucene.search.similarities.TFIDFSimilarity;
 import org.apache.lucene.store.FSDirectory;
 
 
@@ -41,8 +40,8 @@ import java.util.HashMap;
 
 public class SearchIndex {
     private static String indexPath = "../index";
-    private static String queryPath = "/Users/zhangbowen/Programming/Project/LuceneApp/cran/cran.qry";
-    private static String outputPath = "/Users/zhangbowen/Programming/Project/LuceneApp/trec_eval-9.0.7/output-boost.txt";
+    private static String queryPath = "../cran/cran.qry";
+    private static String outputPath = "../trec_eval-9.0.7/query-result-boost.txt";
     private static int scoringApproach = 1;
     private static int hitsPerPage = 10;
     private static int searchMode = 1;
@@ -59,9 +58,9 @@ public class SearchIndex {
         for(int i = 0; i < args.length; i++){
             if(args[i].equals("-query"))
                 queryPath = args[i+1];
-            else if(args.equals("-model"))
+            else if(args[i].equals("-model"))
                 scoringApproach = Integer.parseInt(args[i+1]);
-            else if(args.equals("-searchMode"))
+            else if(args[i].equals("-searchMode"))
                 searchMode = Integer.parseInt(args[i+1]);
         }
         File queryFolder = new File(indexPath);
@@ -71,32 +70,20 @@ public class SearchIndex {
         DirectoryReader DirReader = DirectoryReader.open(FSDirectory.open(Paths.get(indexPath)));
         IndexSearcher indexSearcher = new IndexSearcher(DirReader);
         Analyzer analyzer = new StandardAnalyzer();
-        BufferedReader bufferedReader = null;
+        BufferedReader bufferedReader;
         PrintWriter writer = new PrintWriter(outputPath,"UTF-8");
         int QueryNumber = 1;
 
         switch(scoringApproach){
             case 1:
                 indexSearcher.setSimilarity(new ClassicSimilarity());
+                break;
             case 2:
                 indexSearcher.setSimilarity(new BM25Similarity());
-//            case 3:
-//                indexSearcher.setSimilarity(new TFIDFSimilarity() {
-//                    @Override
-//                    public float tf(float freq) { return 0; }
-//
-//                    @Override
-//                    public float idf(long docFreq, long docCount) { return 0; }
-//
-//                    @Override
-//                    public float lengthNorm(int length) { return 0; }
-//
-//                    @Override
-//                    public float sloppyFreq(int distance) { return 0; }
-//
-//                    @Override
-//                    public float scorePayload(int doc, int start, int end, BytesRef payload) { return 0; }
-//                });
+                break;
+            default:
+                System.out.println("Unresolved model parameter");
+                System.exit(1);
         }
 
         if( queryPath != null){
@@ -104,13 +91,14 @@ public class SearchIndex {
         }else{
             bufferedReader = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
         }
-//        HashMap<String, Float> boostedScores = new HashMap<String, Float>();
-//        boostedScores.put("TITLE", 0.5f);
-//        boostedScores.put("WRITING", 0.5f);
-//        boostedScores.put("AUTHOR", 0.01f);
-//        boostedScores.put("BACKGROUND", 0.01f);
+//        HashMap<String, Float> boostList = new HashMap<String, Float>();
+//        boostList.put("TITLE", 0.5f);
+//        boostList.put("WRITING", 0.5f);
+//        boostList.put("AUTHOR", 0.01f);
+//        boostList.put("BACKGROUND", 0.01f);
         QueryParser parser = new MultiFieldQueryParser(new String[]{"TITLE",  "WRITING"},analyzer);
         String line = bufferedReader.readLine();
+        long StartTime = System.currentTimeMillis();
         while(true){
             String QueryString = "";//initiate one Query String for each query
             if(line == null)
@@ -132,40 +120,47 @@ public class SearchIndex {
 
             Query query = parser.parse(QueryParser.escape(QueryString.trim()));
 //            System.out.println(query);
-            long StartTime = System.currentTimeMillis();
-            doPagingSearch(bufferedReader, indexSearcher, query, hitsPerPage, writer, QueryNumber);
-            long EndTime = System.currentTimeMillis();
-            System.out.println((EndTime - StartTime) + "MillSeconds cost.  " + " Number " + QueryNumber );
+            doPagingSearch(indexSearcher, query, hitsPerPage, writer, QueryNumber);
             QueryNumber++;
 
         }
+        long EndTime = System.currentTimeMillis();
+        System.out.println("--------------------------------------------------");
+        System.out.println( (EndTime - StartTime) + " ms costs for the 225 queries..." );
+        System.out.println("--------------------------------------------------");
         writer.close();
         DirReader.close();
 
     }
 
-    public static void doPagingSearch(BufferedReader in, IndexSearcher searcher, Query query,
+    public static void doPagingSearch(IndexSearcher searcher, Query query,
                                       int hitsPerPage, PrintWriter writer, int queryNumber) throws IOException{
         int hitsNum = 0;
         TopDocs results = searcher.search(query, hitsPerPage * 5);
-        if(searchMode == 1)
-            hitsNum = hitsPerPage * 5;
-        if(searchMode == 2){
-            int numTotalHits = Math.toIntExact(results.totalHits.value);
-            results = searcher.search(query, numTotalHits);
-            hitsNum = numTotalHits;
+        switch (searchMode){
+            case 1:
+                hitsNum = hitsPerPage * 5;
+                break;
+            case 2:
+                int numTotalHits = Math.toIntExact(results.totalHits.value);
+                results = searcher.search(query, numTotalHits);
+                hitsNum = numTotalHits;
+                break;
+            default:
+                System.out.println("Unresolved Search Mode Parameter");
+                System.exit(1);
+                break;
         }
+
         ScoreDoc[] hits = results.scoreDocs;
         System.out.println(hitsNum + " total matching documents");
         int start = 0;
-//        int end = Math.min(numTotalHits, hitsPerPage);
-//
-//        end = Math.min(hits.length, start + hitsPerPage);
         for (int i = start; i < hitsNum; i++) {
             Document doc = searcher.doc(hits[i].doc);
             String ID = doc.get("ID");
             if (ID != null) {
-                System.out.println(queryNumber + " [" + ID + "] " + (i+1) + " " + hits[i].score);
+                System.out.println("Q-" + queryNumber + " matches: [" + ID + "] " + "Rank:" + (i+1)
+                                    + " " + "Scoring: " + hits[i].score);
                 writer.println(queryNumber+" 0 " + ID.replace(".I ","") + " "
                                + (i+1) + " " + hits[i].score +" STANDARD");
             }
