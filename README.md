@@ -11,16 +11,16 @@ Lucene 8.4.1
 ```
 
 ## Running App
-* Download this repo</br>
-* Run the command below
+- 1.Download this repo</br>
+- 2.Run the command below
 ```shell
 cd {HOME}/Lucen-Search-App/LuceneSearch
 ```
-* Run Index 
+- 3.Run Index 
 ```shell
 java -cp target/LuceneSearch-1.0-SNAPSHOT.jar com.luceneSearch.mark.IndexFiles -file ../cran/cran.all.1400
 ```
-* Run Search
+- 4.Run Search
 ```shell
 java -cp target/LuceneSearch-1.0-SNAPSHOT.jar com.luceneSearch.mark.SearchIndex -query ../cran/cran.qry -model 1 -searchMode 2
 ```
@@ -28,7 +28,7 @@ java -cp target/LuceneSearch-1.0-SNAPSHOT.jar com.luceneSearch.mark.SearchIndex 
  -searchMode 1 represents return the top 50 results; -searchMode 2 represents return all the mathced results)</br> 
  
  
-* Evaluation
+- 5.Evaluation</br>
 cd to the trec_eval-9.0.7 folder and run the command below
 ```shell
 ./trec_eval QRelsCorrectedforTRECeval query-result-boost.txt
