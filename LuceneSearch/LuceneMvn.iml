@@ -11,9 +11,9 @@
     </content>
     <orderEntry type="jdk" jdkName="1.8" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Maven: org.apache.lucene:lucene-queryparser:8.4.1" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.lucene:lucene-core:8.4.1" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.lucene:lucene-queries:8.4.1" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.lucene:lucene-sandbox:8.4.1" level="project" />
+    <orderEntry type="library" exported="" name="lucene-analyzers-common-8.4.1" level="project" />
+    <orderEntry type="library" exported="" name="lucene-core-8.4.1" level="project" />
+    <orderEntry type="library" exported="" name="lucene-queries-8.4.1" level="project" />
+    <orderEntry type="library" exported="" name="lucene-queryparser-8.4.1" level="project" />
   </component>
 </module>

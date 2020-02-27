@@ -18,6 +18,7 @@
 package com.luceneSearch.mark;
 
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.en.EnglishAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
@@ -42,9 +43,9 @@ public class SearchIndex {
     private static String indexPath = "../index";
     private static String queryPath = "../cran/cran.qry";
     private static String outputPath = "../trec_eval-9.0.7/query-result-boost.txt";
-    private static int scoringApproach = 1;
+    private static int scoringApproach = 2;
     private static int hitsPerPage = 10;
-    private static int searchMode = 1;
+    private static int searchMode = 2;
 
 
     public static void main(String[] args) throws Exception{
@@ -91,12 +92,12 @@ public class SearchIndex {
         }else{
             bufferedReader = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
         }
-//        HashMap<String, Float> boostList = new HashMap<String, Float>();
-//        boostList.put("TITLE", 0.5f);
-//        boostList.put("WRITING", 0.5f);
+        HashMap<String, Float> boostList = new HashMap<>();
+        boostList.put("TITLE", 5f);
+        boostList.put("WRITING", 10f);
 //        boostList.put("AUTHOR", 0.01f);
 //        boostList.put("BACKGROUND", 0.01f);
-        QueryParser parser = new MultiFieldQueryParser(new String[]{"TITLE",  "WRITING"},analyzer);
+        QueryParser parser = new MultiFieldQueryParser(new String[]{"TITLE",  "WRITING"},analyzer,boostList);
         String line = bufferedReader.readLine();
         long StartTime = System.currentTimeMillis();
         while(true){
@@ -135,8 +136,12 @@ public class SearchIndex {
 
     public static void doPagingSearch(IndexSearcher searcher, Query query,
                                       int hitsPerPage, PrintWriter writer, int queryNumber) throws IOException{
+
         int hitsNum = 0;
         TopDocs results = searcher.search(query, hitsPerPage * 5);
+        int negativeCheck = Math.min(hitsPerPage * 5, Math.toIntExact(results.totalHits.value));
+        if(negativeCheck <= 0)
+            return;
         switch (searchMode){
             case 1:
                 hitsNum = hitsPerPage * 5;

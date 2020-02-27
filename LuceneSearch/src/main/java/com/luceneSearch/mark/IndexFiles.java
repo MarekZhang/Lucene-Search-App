@@ -38,7 +38,7 @@ import java.io.InputStream;
 
 
 public class IndexFiles {
-    private static String FILE_DIR = "/Users/zhangbowen/Programming/Project/LuceneApp/cran/cran.all.1400";
+    private static String FILE_DIR = "/Users/zhangbowen/Programming/Project/Lucene-Search-App/cran/cran.all.1400";
     private static String INDEX_DIR = "../index";
     private IndexFiles(){}
 
@@ -113,7 +113,7 @@ public class IndexFiles {
                             TermType = "BACKGROUND";
                         else if(line.matches("\\.W"))
                             TermType = "WRITING";
-                        else// the current line is String content
+                        else // the current line is String content
                             doc.add(new TextField(TermType, line, Field.Store.YES));
 
                         //read next line(TermType or ID);
