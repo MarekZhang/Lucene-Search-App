@@ -18,6 +18,10 @@
 package com.luceneSearch.mark;
 
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.CharArraySet;
+import org.apache.lucene.analysis.core.SimpleAnalyzer;
+import org.apache.lucene.analysis.core.StopAnalyzer;
+import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
 import org.apache.lucene.analysis.en.EnglishAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
@@ -37,15 +41,17 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 public class SearchIndex {
     private static String indexPath = "../index";
     private static String queryPath = "../cran/cran.qry";
     private static String outputPath = "../trec_eval-9.0.7/query-result-boost.txt";
-    private static int scoringApproach = 2;
+    private static int scoringApproach = 1;
     private static int hitsPerPage = 10;
-    private static int searchMode = 2;
+    private static int searchMode = 1;
 
 
     public static void main(String[] args) throws Exception{
@@ -70,7 +76,22 @@ public class SearchIndex {
 
         DirectoryReader DirReader = DirectoryReader.open(FSDirectory.open(Paths.get(indexPath)));
         IndexSearcher indexSearcher = new IndexSearcher(DirReader);
-        Analyzer analyzer = new StandardAnalyzer();
+        List<String> stopWordList = Arrays.asList("a", "about", "above", "after", "again", "against",
+                "all", "am", "an", "and", "any", "are", "as", "at", "be", "because", "been", "before",
+                "being", "below", "between", "both", "but", "by", "could", "did", "do", "does", "doing",
+                "down", "during", "each", "few", "for", "from", "further", "had", "has", "have", "having",
+                "he", "he'd", "he'll", "he's", "her", "here", "here's", "hers", "herself", "him", "himself",
+                "his", "how", "how's", "i", "i'd", "i'll", "i'm", "i've", "if", "in", "into", "is", "it", "it's",
+                "its", "itself", "let's", "me", "more", "most", "my", "myself", "nor", "of", "on", "once", "only", "or",
+                "other", "ought", "our", "ours", "ourselves", "out", "over", "own", "same", "she", "she'd", "she'll", "she's",
+                "should", "so", "some", "such", "than", "that", "that's", "the", "their", "theirs", "them", "themselves", "then",
+                "there", "there's", "these", "they", "they'd", "they'll", "they're", "they've", "this", "those", "through", "to",
+                "too", "under", "until", "up", "very", "was", "we", "we'd", "we'll", "we're", "we've", "were", "what", "what's", "when",
+                "when's", "where", "where's", "which", "while", "who", "who's", "whom", "why", "why's", "with", "would", "you", "you'd",
+                "you'll", "you're", "you've", "your", "yours", "yourself", "yourselves");
+        CharArraySet stopWordSet = new CharArraySet( stopWordList, true);
+        Analyzer analyzer = new StopAnalyzer(stopWordSet);
+//        Analyzer analyzer = new StandardAnalyzer();
         BufferedReader bufferedReader;
         PrintWriter writer = new PrintWriter(outputPath,"UTF-8");
         int QueryNumber = 1;
