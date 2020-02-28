@@ -36,7 +36,12 @@ java -cp target/LuceneSearch-1.0-SNAPSHOT.jar com.luceneSearch.mark.SearchIndex 
  
  
 - 5. Evaluation</br>
-cd to the trec_eval-9.0.7 folder and run the command below
+```shell
+cd ..
+```
+```shell
+cd trec_eval-9.0.7/
+```
 ```shell
 ./trec_eval QRelsCorrectedforTRECeval query-result-boost.txt
 ```
