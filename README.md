@@ -17,10 +17,10 @@ Lucene 8.4.1
 ```shell
 cd Lucen-Search-App/LuceneSearch
 ```
-```
+```shell
 mvn clean
 ```
-```
+```shell
 mvn package
 ```
 - 3. Run Index 
