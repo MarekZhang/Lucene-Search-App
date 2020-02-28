@@ -14,7 +14,7 @@ Lucene 8.4.1
 - 1. Download this repo</br>
 - 2. Run the command below
 ```shell
-cd {HOME}/Lucen-Search-App/LuceneSearch
+cd Lucen-Search-App/LuceneSearch
 ```
 - 3. Run Index 
 ```shell
@@ -22,7 +22,7 @@ java -cp target/LuceneSearch-1.0-SNAPSHOT.jar com.luceneSearch.mark.IndexFiles -
 ```
 - 4. Run Search
 ```shell
-java -cp target/LuceneSearch-1.0-SNAPSHOT.jar com.luceneSearch.mark.SearchIndex -query ../cran/cran.qry -model 1 -searchMode 2
+java -cp target/LuceneSearch-1.0-SNAPSHOT.jar com.luceneSearch.mark.SearchIndex -query ../cran/cran.qry -model 2 -searchMode 2
 ```
 (-model 1 represents VSM; -model 2 represents BM25
  -searchMode 1 represents return the top 50 results; -searchMode 2 represents return all the mathced results)</br> 
