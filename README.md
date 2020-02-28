@@ -4,17 +4,24 @@ A implementation of search Engine based on Apache Lucene
 ## Running Environment
 
 ```
-MacOS Catalina 10.15.3
-Maven 3.6.3
-Java 8
+Linux 4.4.0
+Maven 3.3.9
+Java 1.8
+gcc 5.4.0
 Lucene 8.4.1
 ```
 
 ## Running App
 - 1. Download this repo</br>
-- 2. Run the command below
+- 2. Build project
 ```shell
 cd Lucen-Search-App/LuceneSearch
+```
+```
+mvn clean
+```
+```
+mvn package
 ```
 - 3. Run Index 
 ```shell
